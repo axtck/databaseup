@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run current test",
+            "type": "pwa-node",
+            "program": "${workspaceFolder}/node_modules/jest/bin/jest",
+            "request": "launch",
+            "args": [
+                "${fileBasename}",
+                "--config",
+                "jest.config.js",
+                "--outputFile",
+                "${fileDirname}${pathSeparator}${fileBasenameNoExtension}.output.json"
+            ],
+            "console": "integratedTerminal",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        }
+    ]
+}
