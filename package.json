@@ -1,5 +1,5 @@
 {
-  "name": "dbup",
+  "name": "databaseup",
   "version": "1.0.0",
   "description": "Simple migrations for NodeJS",
   "main": "index.js",
@@ -15,14 +15,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/axtck/dbup.git"
+    "url": "git+https://github.com/axtck/databaseup.git"
   },
   "author": "axtck",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/axtck/dbup/issues"
+    "url": "https://github.com/axtck/databaseup/issues"
   },
-  "homepage": "https://github.com/axtck/dbup#readme",
+  "homepage": "https://github.com/axtck/databaseup#readme",
   "devDependencies": {
     "@babel/core": "^7.16.5",
     "@babel/preset-env": "^7.16.5",
