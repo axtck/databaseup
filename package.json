@@ -1,6 +1,6 @@
 {
   "name": "databaseup",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple migrations for NodeJS",
   "main": "index.js",
   "scripts": {
