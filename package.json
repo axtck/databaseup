@@ -13,6 +13,9 @@
     "lint": "eslint . --ext .ts",
     "test": "jest"
   },
+  "bin": {
+    "create": "dist/commands/create.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/axtck/databaseup.git"
