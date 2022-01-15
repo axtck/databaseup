@@ -18,22 +18,24 @@ export const downgrade = async (connection: mysql.Connection): Promise<void> => 
     console.log(rows);
 }`;
 
-const write = async (): Promise<void> => {
+const create = async (): Promise<void> => {
     try {
-        const migrationName: string = getCreateArgs()[0];
-        const srcFolder: string = getCreateArgs()[1];
+        const timestamp: number = new Date().getTime();
+        const migrationFileName: string = `${timestamp}_${getCreateArgs().name}.ts`;
+        const srcFolder: string = getCreateArgs().srcFolder;
         const migrationsFolder: string = path.resolve(".", srcFolder, "migrations");
         await mkdirp(migrationsFolder);
-        const migrationPath = path.resolve(migrationsFolder, `${migrationName}.ts`);
-        console.log(migrationPath);
+        const migrationPath = path.resolve(migrationsFolder, migrationFileName);
         fs.writeFileSync(migrationPath, migrationFileContent);
+        console.log(successText("successfully created migration"));
+        console.log(successText(migrationPath));
     } catch (e) {
-        handleExceptionLazy(e, "writing migration failed");
-        console.log(successText("Arg 1: migration name"));
-        console.log(successText("Arg 2: /src folder name"));
+        handleExceptionLazy(e, "creating migration failed");
+        console.log(successText("arg 1: migration name"));
+        console.log(successText("arg 2: /src folder name"));
     }
 };
 
-write().catch((e) => {
+create().catch((e) => {
     handleExceptionLazy(e, "something went wrong");
 });

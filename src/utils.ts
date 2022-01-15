@@ -6,12 +6,15 @@ export const handleExceptionLazy = (e: unknown, message: string): void => {
     }
 };
 
-export const getCreateArgs = (): string[] => {
+export const getCreateArgs = (): { name: string, srcFolder: string; } => {
     const args = process.argv.slice(2);
     if (!args || !args.length) throw new Error("no args passed");
     if (args.length < 2) throw new Error("missing arg");
     if (args.length > 2) throw new Error("too many args passed");
-    return args;
+    return {
+        name: args[0],
+        srcFolder: args[1]
+    };
 };
 
 export const successText = (text: string) => {
