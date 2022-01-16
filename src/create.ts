@@ -1,10 +1,8 @@
-#!/usr/bin/env node
-
 import fs from "fs";
 import path from "path";
 import mkdirp from "mkdirp";
 
-import { getCreateArgs, handleExceptionLazy, successText } from "../utils";
+import { getCreateArgs, handleExceptionLazy, successText } from "./utils";
 
 const migrationFileContent: string = `import mysql from "mysql2/promise";
 
@@ -18,7 +16,7 @@ export const downgrade = async (connection: mysql.Connection): Promise<void> => 
     console.log(rows);
 }`;
 
-const create = async (): Promise<void> => {
+export const create = async (): Promise<void> => {
     try {
         const timestamp: number = new Date().getTime();
         const migrationFileName: string = `${timestamp}_${getCreateArgs().name}.ts`;
@@ -35,7 +33,3 @@ const create = async (): Promise<void> => {
         console.log(successText("arg 2: /src folder name"));
     }
 };
-
-create().catch((e) => {
-    handleExceptionLazy(e, "something went wrong");
-});
