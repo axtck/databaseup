@@ -1,17 +1,11 @@
 import fs from "fs";
 import path from "path";
 import mkdirp from "mkdirp";
-
 import { getCreateArgs, handleExceptionLazy, successText } from "./utils";
 
 const migrationFileContent: string = `import mysql from "mysql2/promise";
 
 export const upgrade = async (connection: mysql.Connection): Promise<void> => {
-    const [rows] = await connection.query("show databases")
-    console.log(rows);
-}
-
-export const downgrade = async (connection: mysql.Connection): Promise<void> => {
     const [rows] = await connection.query("show databases")
     console.log(rows);
 }`;
