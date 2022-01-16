@@ -1,17 +1,11 @@
 import fs from "fs";
 import path from "path";
 import mkdirp from "mkdirp";
-
 import { getCreateArgs, handleExceptionLazy, successText } from "./utils";
 
 const migrationFileContent: string = `import mysql from "mysql2/promise";
 
 export const upgrade = async (connection: mysql.Connection): Promise<void> => {
-    const [rows] = await connection.query("show databases")
-    console.log(rows);
-}
-
-export const downgrade = async (connection: mysql.Connection): Promise<void> => {
     const [rows] = await connection.query("show databases")
     console.log(rows);
 }`;
@@ -21,7 +15,7 @@ export const create = async (): Promise<void> => {
         const timestamp: number = new Date().getTime();
         const migrationFileName: string = `${timestamp}_${getCreateArgs().name}.ts`;
         const srcFolder: string = getCreateArgs().srcFolder;
-        const migrationsFolder: string = path.resolve(".", srcFolder, "migrations");
+        const migrationsFolder: string = path.resolve(path.join(".", srcFolder, "migrations"));
         await mkdirp(migrationsFolder);
         const migrationPath = path.resolve(migrationsFolder, migrationFileName);
         fs.writeFileSync(migrationPath, migrationFileContent);
