@@ -1,4 +1,5 @@
 node_modules/
 dist/
 
-src/tests/migrations # migrations created from tests
+# migrations created by tests
+src/tests/migrations
