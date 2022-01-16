@@ -11,6 +11,9 @@ export const getCreateArgs = (): { name: string, srcFolder: string; } => {
     if (!args || !args.length) throw new Error("no args passed");
     if (args.length < 2) throw new Error("missing arg");
     if (args.length > 2) throw new Error("too many args passed");
+    if (!/^[a-zA-Z0-9]+$/.test(args[0])) throw new Error("name has to meet /^[a-zA-Z0-9]+$/");
+    if (!/^[a-zA-Z0-9/\\]+$/.test(args[1])) throw new Error("root folder has to meet /^[a-zA-Z0-9/\\]+$/");
+
     return {
         name: args[0],
         srcFolder: args[1]
