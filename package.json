@@ -17,7 +17,7 @@
     "dist/**/*"
   ],
   "bin": {
-    "databaseup-create": "./dist/commands/create.js"
+    "databaseup-create": "./dist/bin/create.js"
   },
   "repository": {
     "type": "git",
