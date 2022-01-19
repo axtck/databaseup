@@ -1,3 +1,4 @@
+import { IMigrationFileInfo } from "./types";
 export const handleExceptionLazy = (e: unknown, message: string): void => {
     if (e instanceof Error) {
         console.log(warningText(`${message}: ${e.message}`));
@@ -18,6 +19,15 @@ export const getCreateArgs = (): { name: string, srcFolder: string; } => {
         name: args[0],
         srcFolder: args[1]
     };
+};
+
+export const convertFilename = (filename: string): IMigrationFileInfo => {
+    const parts = filename.slice(-3).split(/_(.+)/); // slice of extention and split on first _
+    const info: IMigrationFileInfo = {
+        timestamp: Number(parts[0]),
+        name: parts[1]
+    };
+    return info;
 };
 
 export const successText = (text: string) => {
