@@ -22,7 +22,9 @@ export const getCreateArgs = (): { name: string, srcFolder: string; } => {
 };
 
 export const convertFilename = (filename: string): IMigrationFileInfo => {
-    const parts = filename.slice(-3).split(/_(.+)/); // slice of extention and split on first _
+    const parts = filename.slice(0, -3).split(/_(.+)/).filter(x => x); // slice of extention and split on first _
+    if (!parts || parts.length !== 2) throw new Error("migration filename invalid");
+    if (isNaN(Number(parts[0]))) throw new Error("migration timestamp missing in filename");
     const info: IMigrationFileInfo = {
         timestamp: Number(parts[0]),
         name: parts[1]
