@@ -9,13 +9,8 @@ export const upgradeDatabase = async (migrationsFolderPath: string, connection: 
         const createdTable = await createMigrationsTable(connection);
         if (createdTable === CreatedStatus.Exists) console.log(successText("migrations table not created (exists)"));
 
-        const failedMigrations: Array<{ id: number; }> = await getFailedMigrations(connection);
         const files: string[] = await readdir(migrationsFolderPath);
-
-        // find migrations to run
-        const migrationsToRun: string[] = files.filter((f) => {
-            return failedMigrations.find(m => m.id === convertFilename(f).timestamp); // search on timestamp
-        });
+        const migrationsToRun = await getMigrationsToRun(connection, files);
 
         // sort based on timestamp (chronological order)
         const sortedMigrationsToRun: string[] = migrationsToRun.sort((a, b) => {
@@ -47,7 +42,7 @@ export const upgradeDatabase = async (migrationsFolderPath: string, connection: 
 };
 
 const createMigrationsTable = async (connection: mysql.Connection): Promise<CreatedStatus> => {
-    const existingTable = await connection.query("SHOW TABLES LIKE 'migrations'");
+    const [existingTable] = await connection.query<DbQueryResult<Array<unknown>>>("SHOW TABLES LIKE 'migrations'");
     if (existingTable && existingTable.length) return CreatedStatus.Exists;
 
     const createMigrationsTableQuery: string = `
@@ -83,8 +78,30 @@ const insertMigration = async (connection: mysql.Connection, migrationFileInfo: 
     await connection.query(insertMigrationQuery, parameters);
 };
 
+const getStoredMigrations = async (connection: mysql.Connection): Promise<Array<{ id: number; }>> => {
+    const getStoredMigrationsQuery: string = "SELECT id FROM migrations";
+    const [storedMigrations] = await connection.query<DbQueryResult<Array<{ id: number; }>>>(getStoredMigrationsQuery);
+    return storedMigrations;
+};
+
 const getFailedMigrations = async (connection: mysql.Connection): Promise<Array<{ id: number; }>> => {
     const getMigrationsQuery: string = "SELECT id FROM migrations WHERE succeeded = FALSE";
     const [failedMigrations] = await connection.query<DbQueryResult<Array<{ id: number; }>>>(getMigrationsQuery);
     return failedMigrations;
+};
+
+const getMigrationsToRun = async (connection: mysql.Connection, migrationFiles: string[]): Promise<string[]> => {
+    const storedMigrationIds = (await getStoredMigrations(connection)).map(m => m.id);
+    const failedMigrationIds = (await getFailedMigrations(connection)).map(m => m.id);
+
+    const newMigrations = migrationFiles.filter((m) => {
+        return !storedMigrationIds.includes(convertFilename(m).timestamp);
+    });
+
+    const failedMigrations = migrationFiles.filter((m) => {
+        return failedMigrationIds.includes(convertFilename(m).timestamp);
+    });
+
+    const migrationsToRun = [...newMigrations, ...failedMigrations];
+    return migrationsToRun;
 };

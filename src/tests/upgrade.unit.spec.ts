@@ -8,12 +8,16 @@ describe("upgrade", () => {
         const connection: mysql.Connection = await mysql.createConnection({
             host: "localhost",
             user: "root",
-            password: "admin"
+            password: "admin",
+            database: "developmentdb",
+            port: 3307
         });
         return connection;
     };
+
     it("should succeed", async () => {
         const connection: mysql.Connection = await createTestConnection();
         await upgradeDatabase(migrationsPath, connection);
+        connection.destroy();
     });
 });
