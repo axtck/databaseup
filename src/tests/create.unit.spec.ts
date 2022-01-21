@@ -1,15 +1,8 @@
 import { create } from "../create";
-import { title } from "./../index";
 import os from "os";
 
 type Platform = "posix" | "windows";
 const platform: Platform = os.platform() === "win32" ? "windows" : "posix";
-
-describe("index", () => {
-    it("should succeed", () => {
-        expect(title).toEqual("dbup");
-    });
-});
 
 describe("create", () => {
     const consoleSpy = jest.spyOn(console, "log");
@@ -23,23 +16,8 @@ describe("create", () => {
         reset();
     });
 
-    it("should succeed (posix arg)", async () => {
+    it("should succeed", async () => {
         process.argv = [...baseArgs, "testmigration", "src/tests"]; // posix path
-        await create();
-
-        if (platform === "windows") {
-            expect(consoleSpy).toHaveBeenNthCalledWith(1, expect.stringContaining("successfully created migration"));
-            expect(consoleSpy).toHaveBeenNthCalledWith(2, expect.stringContaining("src\\tests\\migrations"));
-            expect(consoleSpy).toHaveBeenCalledTimes(2);
-        } else {
-            expect(consoleSpy).toHaveBeenNthCalledWith(1, expect.stringContaining("successfully created migration"));
-            expect(consoleSpy).toHaveBeenNthCalledWith(2, expect.stringContaining("src/tests/migrations"));
-            expect(consoleSpy).toHaveBeenCalledTimes(2);
-        }
-    });
-
-    it("should succeed (windows arg)", async () => {
-        process.argv = [...baseArgs, "testmigration", "src\\tests"]; // windows path
         await create();
 
         if (platform === "windows") {

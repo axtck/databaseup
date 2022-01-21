@@ -1,3 +1,4 @@
+import { IMigrationFileInfo } from "./types";
 export const handleExceptionLazy = (e: unknown, message: string): void => {
     if (e instanceof Error) {
         console.log(warningText(`${message}: ${e.message}`));
@@ -12,12 +13,23 @@ export const getCreateArgs = (): { name: string, srcFolder: string; } => {
     if (args.length < 2) throw new Error("missing arg");
     if (args.length > 2) throw new Error("too many args passed");
     if (!/^[a-zA-Z0-9]+$/.test(args[0])) throw new Error("name has to meet /^[a-zA-Z0-9]+$/");
-    if (!/^[a-zA-Z0-9/\\]+$/.test(args[1])) throw new Error("root folder has to meet /^[a-zA-Z0-9/\\]+$/");
+    if (!/^[a-zA-Z0-9/]+$/.test(args[1])) throw new Error("root folder has to meet /^[a-zA-Z0-9/]+$/");
 
     return {
         name: args[0],
         srcFolder: args[1]
     };
+};
+
+export const convertFilename = (filename: string): IMigrationFileInfo => {
+    const parts = filename.slice(0, -3).split(/_(.+)/).filter(x => x); // slice of extention and split on first _
+    if (!parts || parts.length !== 2) throw new Error("migration filename invalid");
+    if (isNaN(Number(parts[0]))) throw new Error("migration timestamp missing in filename");
+    const info: IMigrationFileInfo = {
+        timestamp: Number(parts[0]),
+        name: parts[1]
+    };
+    return info;
 };
 
 export const successText = (text: string) => {
