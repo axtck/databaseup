@@ -2,13 +2,15 @@ import { readdir } from "fs/promises";
 import mysql from "mysql2/promise";
 import path from "path";
 import { IMigrationFile, IMigrationFileInfo, CreatedStatus, DbQueryResult } from "./types";
-import { convertFilename, handleExceptionLazy, successText, warningText } from "./utils";
+import { convertFilename, handleExceptionLazy, successText } from "./utils";
 
 export const upgradeDatabase = async (migrationsFolderPath: string, connection: mysql.Connection) => {
     try {
-        const createdTable = await createMigrationsTable(connection);
-        if (createdTable === CreatedStatus.Exists) console.log(successText("migrations table not created (exists)"));
+        // create migrations table
+        const createTableStatus: CreatedStatus = await createMigrationsTable(connection);
+        if (createTableStatus === CreatedStatus.Exists) console.log(successText("migrations table not created (exists)"));
 
+        // get migrations
         const files: string[] = await readdir(migrationsFolderPath);
         const migrationsToRun = await getMigrationsToRun(connection, files);
 
@@ -16,24 +18,27 @@ export const upgradeDatabase = async (migrationsFolderPath: string, connection: 
         const sortedMigrationsToRun: string[] = migrationsToRun.sort((a, b) => {
             return convertFilename(a).timestamp - convertFilename(b).timestamp;
         });
-        console.log(successText("migrations to run:"));
+        console.log(successText("migrations to run (in order):"));
         for (const migration of migrationsToRun) console.log(convertFilename(migration).timestamp);
 
         // upgrade all migrations to run
         for (const file of sortedMigrationsToRun) {
+
+            // import migration
             const migration: IMigrationFile = await import(path.resolve(path.join(migrationsFolderPath, file)));
             if (!migration.upgrade) throw new Error(`migration ${file} doesn't have an upgrade function`);
 
-            const migrationInfo: IMigrationFileInfo = convertFilename(file);
-            console.log(successText(`upgrading: migration ${migrationInfo.timestamp} (${migrationInfo.name})`));
+            // extract info from migration filename
+            const migrationFileInfo: IMigrationFileInfo = convertFilename(file);
+            console.log(successText(`upgrading: migration ${migrationFileInfo.timestamp} (${migrationFileInfo.name})`));
 
             try {
                 await migration.upgrade(connection);
-                console.log(successText(`migration ${migrationInfo.timestamp} successfully upgraded`));
-                await insertMigration(connection, migrationInfo, true);
+                console.log(successText(`migration ${migrationFileInfo.timestamp} successfully upgraded`));
+                await insertMigration(connection, migrationFileInfo, true);
             } catch (e) {
-                await insertMigration(connection, migrationInfo, false);
-                console.log(warningText(`migration ${migrationInfo.timestamp} failed upgrading`));
+                await insertMigration(connection, migrationFileInfo, false);
+                handleExceptionLazy(e, `migration ${migrationFileInfo.timestamp} failed upgrading`);
             }
         }
     } catch (e) {
