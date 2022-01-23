@@ -52,7 +52,7 @@ const createMigrationsTable = async (connection: mysql.Connection): Promise<Crea
 
     const createMigrationsTableQuery: string = `
         CREATE TABLE \`migrations\` (
-            \`id\` int NOT NULL,
+            \`id\` bigint NOT NULL,
             \`name\` varchar(100) NOT NULL,
             \`succeeded\` tinyint(1) NOT NULL,
             \`created\` datetime NOT NULL,
@@ -67,9 +67,9 @@ const createMigrationsTable = async (connection: mysql.Connection): Promise<Crea
 
 const insertMigration = async (connection: mysql.Connection, migrationFileInfo: IMigrationFileInfo, succeeded: boolean): Promise<void> => {
     const insertMigrationQuery: string = `
-        INSERT IGNORE INTO migrations 
+        INSERT INTO migrations 
         (id, name, succeeded, created, executed)
-        VALUES(?, ?, ?, ?, ?);
+        VALUES(?, ?, ?, ?, ?)
     `;
 
     const parameters: Array<number | string | Date | boolean> = [
