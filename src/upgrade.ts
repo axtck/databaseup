@@ -4,7 +4,7 @@ import path from "path";
 import { IMigrationFile, IMigrationFileInfo, CreatedStatus, DbQueryResult } from "./types";
 import { convertFilename, handleExceptionLazy, successText } from "./utils";
 
-export const upgradeDatabase = async (migrationsFolderPath: string, connection: mysql.Connection) => {
+export const upgradeDatabase = async (migrationsFolderPath: string, connection: mysql.Connection): Promise<void> => {
     try {
         // create migrations table
         const createTableStatus: CreatedStatus = await createMigrationsTable(connection);
@@ -12,7 +12,11 @@ export const upgradeDatabase = async (migrationsFolderPath: string, connection: 
 
         // get migrations
         const files: string[] = await readdir(migrationsFolderPath);
-        const migrationsToRun = await getMigrationsToRun(connection, files);
+        const migrationsToRun: string[] = await getMigrationsToRun(connection, files);
+        if (!migrationsToRun || !migrationsToRun.length) {
+            console.log(successText("no migrations to run"));
+            return;
+        }
 
         // sort based on timestamp (chronological order)
         const sortedMigrationsToRun: string[] = migrationsToRun.sort((a, b) => {
