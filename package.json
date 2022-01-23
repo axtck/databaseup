@@ -4,6 +4,7 @@
   "description": "Simple migrations for NodeJS",
   "main": "index.js",
   "scripts": {
+    "start": "npm run build && node dist/index.js",
     "build": "rimraf dist && tsc",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
