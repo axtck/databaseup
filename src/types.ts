@@ -15,3 +15,14 @@ export enum CreatedStatus {
 
 export type DbDefaults = RowDataPacket[] | RowDataPacket[][] | OkPacket[] | OkPacket;
 export type DbQueryResult<T> = T & DbDefaults;
+
+export interface ICreateArgs {
+    name: string;
+    src: string;
+    driver: string;
+}
+
+export enum DatabaseDriver {
+    MySQL = "mysql",
+    Postgres = "postgres"
+}

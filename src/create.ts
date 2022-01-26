@@ -14,7 +14,7 @@ export const create = async (): Promise<void> => {
     try {
         const timestamp: number = new Date().getTime();
         const migrationFileName: string = `${timestamp}_${getCreateArgs().name}.ts`;
-        const srcFolder: string = getCreateArgs().srcFolder;
+        const srcFolder: string = getCreateArgs().src;
         const migrationsFolder: string = path.resolve(path.join(".", srcFolder, "migrations"));
         await mkdirp(migrationsFolder);
         const migrationPath = path.resolve(migrationsFolder, migrationFileName);
