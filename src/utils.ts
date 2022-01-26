@@ -10,7 +10,7 @@ export const handleExceptionLazy = (e: unknown, message: string): void => {
     }
 };
 
-export const getCreateArgs = (): ICreateArgs => {
+export const parseArgv = (): ICreateArgs => {
     const { _: extra, name, src, driver } = minimist(process.argv.slice(2), {
         string: ["name", "src", "driver"]
     });
