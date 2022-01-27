@@ -1,6 +1,6 @@
 import { ICreateArgs, IMigrationFileInfo } from "./types";
-import minimist from "minimist";
 import { Constants } from "./Constants";
+import minimist from "minimist";
 
 export const handleExceptionLazy = (e: unknown, message: string): void => {
     if (e instanceof Error) {
@@ -50,3 +50,4 @@ export const successText = (text: string) => {
 export const warningText = (text: string) => {
     return `\x1b[33m${text}\x1b[0m`;
 };
+
