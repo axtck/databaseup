@@ -35,7 +35,9 @@
     "@babel/preset-env": "^7.16.5",
     "@babel/preset-typescript": "^7.16.5",
     "@types/jest": "^27.0.3",
+    "@types/minimist": "^1.2.2",
     "@types/node": "^17.0.5",
+    "@types/pg": "^8.6.4",
     "@typescript-eslint/eslint-plugin": "^5.8.1",
     "@typescript-eslint/parser": "^5.8.1",
     "babel-jest": "^27.4.5",
@@ -46,7 +48,9 @@
   },
   "dependencies": {
     "@types/mkdirp": "^1.0.2",
+    "minimist": "^1.2.5",
     "mkdirp": "^1.0.4",
-    "mysql2": "^2.3.3"
+    "mysql2": "^2.3.3",
+    "pg": "^8.7.1"
   }
 }

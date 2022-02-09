@@ -1,5 +1,5 @@
 import { IMigrationFileInfo } from "../types";
-import { convertFilename } from "../utils";
+import { convertFilename, parseArgv } from "../utils";
 
 describe("utils", () => {
     describe("convertFilename", () => {
@@ -19,6 +19,13 @@ describe("utils", () => {
         it("should fail (no timestamp)", () => {
             const filename: string = "16427abc36717_testmigration.ts";
             expect(() => convertFilename(filename)).toThrow(/migration timestamp missing/);
+        });
+    });
+    describe("getCreateArgs", () => {
+        const baseArgs = ["node", "script.js"]; // placeholders for argv [0] and [1]
+        it("should fail (extra args)", () => {
+            process.argv = [...baseArgs, "--name", "testmigration", "--src", "src/tests", "something else"]; // posix path
+            expect(() => parseArgv()).toThrow(/parsing args failed/);
         });
     });
 });
